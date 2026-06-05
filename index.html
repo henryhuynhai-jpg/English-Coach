@@ -24,7 +24,7 @@
   .topbar{position:absolute;top:14px;left:14px;right:14px;display:flex;align-items:center;gap:10px;z-index:3}
   .pill{background:rgba(0,0,0,.4);backdrop-filter:blur(4px);color:#fff;border:none;border-radius:30px;padding:8px 14px;font-weight:800;font-size:14px;cursor:pointer}
   .pill.round{width:42px;height:42px;padding:0;font-size:18px;border-radius:50%}
-  .spd{margin-left:auto}
+  .spd{margin-left:auto;min-width:64px}
   .banner{display:flex;align-items:center;gap:10px;margin:14px 16px 6px;background:linear-gradient(90deg,#f9a825,#f59e0b);color:#fff;border-radius:16px;padding:13px 16px;font-weight:800;font-size:16px;box-shadow:0 6px 16px rgba(245,158,11,.3)}
   .banner .b-ic{width:30px;height:30px;border-radius:50%;background:#fff;color:#f59e0b;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800}
   .feed{flex:1;overflow-y:auto;padding:8px 16px 6px;display:flex;flex-direction:column;gap:12px}
@@ -70,7 +70,7 @@
       <div class="topbar">
         <button class="pill round" id="reload" title="Bắt đầu lại">✕</button>
         <button class="pill" id="status">Bấm 🎤 để nói</button>
-        <button class="pill spd" id="spd">1x</button>
+        <button class="pill spd" id="spd">🔊 1x</button>
       </div>
     </div>
     <div class="banner"><div class="b-ic">Aa</div> Speaking Section</div>
@@ -92,7 +92,8 @@ Reply ONLY valid JSON, no markdown: {"reply_en":"","reply_vi":"","correction":""
 If he spoke Vietnamese, still reply_en in English and gently encourage; correction stays "".`;
 const SYS_INSPIRE=`Based on the conversation, suggest ONE simple natural English sentence the learner Dũng could say next to Ava. Reply ONLY JSON: {"reply_en":"<the suggested sentence>","reply_vi":"<Vietnamese meaning>","correction":"","correction_vi":""}`;
 const $=id=>document.getElementById(id);
-let listening=false,recog=null,unlocked=false,convo=[],rate=1;
+let listening=false,recog=null,unlocked=false,convo=[],gotResult=false,silenceTimer=null;
+const SPEEDS=[1,1.5,2,3,0.75];let spi=0;let rate=SPEEDS[spi];
 const status=$('status'),feed=$('feed'),micBtn=$('mic'),stage=$('stage');
 const player=new Audio();
 function startSpk(){stage.classList.add('spk');}
@@ -103,7 +104,7 @@ player.onerror=()=>stopSpk();
 function silentURL(){const sr=8000,n=400,b=new ArrayBuffer(44+n),v=new DataView(b);const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);for(let i=0;i<n;i++)v.setUint8(44+i,128);return URL.createObjectURL(new Blob([b],{type:'audio/wav'}));}
 function unlock(){if(unlocked)return;unlocked=true;try{player.src=silentURL();player.play().catch(()=>{});}catch(e){}}
 async function playTTS(text){try{const r=await fetch('/api/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,voice:'coral'})});const d=await r.json();if(d.audio){player.src='data:audio/mp3;base64,'+d.audio;player.playbackRate=rate;await player.play();}else fb(text);}catch(e){fb(text);}}
-function fb(t){if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.93*rate;startSpk();u.onend=stopSpk;window.speechSynthesis.speak(u);}
+function fb(t){if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=Math.min(2,.95*rate);startSpk();u.onend=stopSpk;window.speechSynthesis.speak(u);}
 function addAva(en,vi){const d=document.createElement('div');d.className='ava';
   d.innerHTML='<div class="bubble"><span class="en"></span><div class="vi"></div></div><div class="acts"><button class="act tr">🌐</button><button class="act pl">▶️</button></div>';
   d.querySelector('.en').textContent=en;d.querySelector('.vi').textContent=vi||'';
@@ -115,14 +116,18 @@ function addFix(c,n){const d=document.createElement('div');d.className='fix';d.i
 function addHint(en,vi){const d=document.createElement('div');d.className='hint';d.innerHTML='<div class="l">💡 Gợi ý câu nói</div><div class="e"></div><div class="v"></div>';d.querySelector('.e').textContent='“'+en+'”';d.querySelector('.v').textContent=vi||'';feed.appendChild(d);feed.scrollTop=feed.scrollHeight;playTTS(en);}
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 if(!SR){$('warnbox').innerHTML='<div class="warn">Trình duyệt chưa hỗ trợ nhận giọng nói. Thầy mở bằng Safari/Chrome nhé.</div>';}
-else{recog=new SR();recog.lang='en-US';recog.interimResults=false;recog.continuous=false;
-  recog.onresult=e=>{const t=e.results[0][0].transcript.trim();if(t)ask(t,SYS_CHAT,'chat',true);};
-  recog.onend=()=>{listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤';};
-  recog.onerror=()=>{listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤';};}
-micBtn.onclick=()=>{unlock();if(!player.paused)player.pause();if(listening){recog.stop();return;}try{recog.start();listening=true;micBtn.classList.add('live');micBtn.textContent='■';status.textContent='Đang nghe…';}catch(e){}};
+else{recog=new SR();recog.lang='en-US';recog.interimResults=true;recog.continuous=false;
+  recog.onresult=e=>{let f='',it='';for(let k=e.resultIndex;k<e.results.length;k++){const t=e.results[k][0].transcript;if(e.results[k].isFinal)f+=t;else it+=t;}
+    if(it){status.textContent='Đang nghe… (bấm 🎤 khi xong)';clearTimeout(silenceTimer);silenceTimer=setTimeout(()=>{try{recog.stop();}catch(e){}},1800);}
+    if(f){gotResult=true;clearTimeout(silenceTimer);try{recog.stop();}catch(e){}ask(f.trim(),SYS_CHAT,'chat',true);}};
+  recog.onend=()=>{listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤';clearTimeout(silenceTimer);if(!gotResult)status.textContent='Chưa nghe rõ, bấm 🎤 nói lại nha';};
+  recog.onerror=()=>{listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤';clearTimeout(silenceTimer);status.textContent='Bấm 🎤 để nói';};}
+micBtn.onclick=()=>{unlock();if(!player.paused)player.pause();
+  if(listening){try{recog.stop();}catch(e){}return;}
+  gotResult=false;try{recog.start();listening=true;micBtn.classList.add('live');micBtn.textContent='■';status.textContent='Đang nghe… (bấm 🎤 khi xong)';}catch(e){}};
 $('typeBtn').onclick=()=>{unlock();const t=prompt("Thầy gõ câu muốn nói (tiếng Anh hoặc tiếng Việt):");if(t&&t.trim())ask(t.trim(),SYS_CHAT,'chat',true);};
 $('inspireBtn').onclick=()=>{unlock();ask("(suggest what I can say next)",SYS_INSPIRE,'inspire',false);};
-$('spd').onclick=()=>{rate=rate===1?0.75:1;$('spd').textContent=rate===1?'1x':'0.75x';};
+$('spd').onclick=()=>{spi=(spi+1)%SPEEDS.length;rate=SPEEDS[spi];$('spd').textContent='🔊 '+rate+'x';if(!player.paused){player.playbackRate=rate;}};
 $('reload').onclick=()=>{convo=[];feed.innerHTML='';greet();};
 async function ask(text,system,mode,showYou){
   listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤';
