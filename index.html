@@ -38,7 +38,8 @@
   .fix{align-self:flex-end;background:#fff4d6;border:1px solid #f3d27a;border-radius:14px;padding:10px 14px;max-width:84%}
   .fix .l{font-size:11px;font-weight:800;color:#b07c00;text-transform:uppercase}
   .fix .e{font-size:15px;font-weight:800;color:#7a3b00;margin-top:3px}
-  .fix .n{font-size:13px;font-weight:700;color:#6a4a00;margin-top:5px}
+  .fix .n{font-size:13px;font-weight:700;color:#6a4a00;margin-top:5px;line-height:1.45}
+  .fix .p{font-size:13px;font-weight:700;color:#7a3b00;margin-top:6px;background:rgba(255,255,255,.6);border-radius:9px;padding:6px 9px;line-height:1.4}
   .hint{align-self:center;background:#e8f0ff;border:1px dashed #9cc0ff;border-radius:14px;padding:11px 15px;max-width:90%;text-align:center}
   .hint .l{font-size:11px;font-weight:800;color:#2563eb;text-transform:uppercase}
   .hint .e{font-size:15px;font-weight:800;color:#1e3a8a;margin-top:3px}
@@ -83,14 +84,7 @@
     </div>
   </div>
 <script>
-const SYS_CHAT=`You are "Ava", a friendly bilingual English coach chatting with a Vietnamese learner named Dũng. Have a natural back-and-forth conversation AND gently correct his English.
-Reply ONLY valid JSON, no markdown: {"reply_en":"","reply_vi":"","correction":"","correction_vi":""}
-- reply_en: your short warm reply IN ENGLISH (1-2 sentences) ending with a question to keep chatting. Keep it simple for a learner.
-- reply_vi: Vietnamese translation of reply_en (Southern tone).
-- correction: if his last message was English and had a mistake, the corrected natural English sentence; else "".
-- correction_vi: short Southern-Vietnamese note explaining the fix; else "".
-If he spoke Vietnamese, still reply_en in English and gently encourage; correction stays "".`;
-const SYS_INSPIRE=`Based on the conversation, suggest ONE simple natural English sentence the learner Dũng could say next to Ava. Reply ONLY JSON: {"reply_en":"<the suggested sentence>","reply_vi":"<Vietnamese meaning>","correction":"","correction_vi":""}`;
+const SYS_INSPIRE=`Based on the conversation, suggest ONE simple natural English sentence the learner Dũng could say next to Ava. Reply ONLY JSON: {"reply_en":"<the suggested sentence>","reply_vi":"<Vietnamese meaning>","correction":"","correction_vi":"","pronunciation":""}`;
 const $=id=>document.getElementById(id);
 let listening=false,recog=null,unlocked=false,convo=[],gotResult=false,silenceTimer=null;
 const SPEEDS=[1,1.5,2,3,0.75];let spi=0;let rate=SPEEDS[spi];
@@ -112,39 +106,47 @@ function addAva(en,vi){const d=document.createElement('div');d.className='ava';
   d.querySelector('.pl').onclick=()=>playTTS(en);
   feed.appendChild(d);feed.scrollTop=feed.scrollHeight;}
 function addYou(t){const d=document.createElement('div');d.className='you';d.textContent=t;feed.appendChild(d);feed.scrollTop=feed.scrollHeight;}
-function addFix(c,n){const d=document.createElement('div');d.className='fix';d.innerHTML='<div class="l">✏️ Sửa lại</div><div class="e"></div><div class="n"></div>';d.querySelector('.e').textContent='✅ '+c;d.querySelector('.n').textContent='💡 '+n;feed.appendChild(d);feed.scrollTop=feed.scrollHeight;}
+function addFix(corr,note,pron){const d=document.createElement('div');d.className='fix';
+  let html='<div class="l">✏️ Sửa lại</div><div class="e"></div><div class="n"></div>';
+  if(pron&&pron.trim())html+='<div class="p"></div>';
+  d.innerHTML=html;
+  d.querySelector('.e').textContent='✅ '+corr;
+  d.querySelector('.n').textContent='💡 '+note;
+  if(pron&&pron.trim())d.querySelector('.p').textContent='🗣️ Phát âm: '+pron.trim();
+  feed.appendChild(d);feed.scrollTop=feed.scrollHeight;}
 function addHint(en,vi){const d=document.createElement('div');d.className='hint';d.innerHTML='<div class="l">💡 Gợi ý câu nói</div><div class="e"></div><div class="v"></div>';d.querySelector('.e').textContent='“'+en+'”';d.querySelector('.v').textContent=vi||'';feed.appendChild(d);feed.scrollTop=feed.scrollHeight;playTTS(en);}
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 if(!SR){$('warnbox').innerHTML='<div class="warn">Trình duyệt chưa hỗ trợ nhận giọng nói. Thầy mở bằng Safari/Chrome nhé.</div>';}
 else{recog=new SR();recog.lang='en-US';recog.interimResults=true;recog.continuous=false;
   recog.onresult=e=>{let f='',it='';for(let k=e.resultIndex;k<e.results.length;k++){const t=e.results[k][0].transcript;if(e.results[k].isFinal)f+=t;else it+=t;}
     if(it){status.textContent='Đang nghe… (bấm 🎤 khi xong)';clearTimeout(silenceTimer);silenceTimer=setTimeout(()=>{try{recog.stop();}catch(e){}},1800);}
-    if(f){gotResult=true;clearTimeout(silenceTimer);try{recog.stop();}catch(e){}ask(f.trim(),SYS_CHAT,'chat',true);}};
+    if(f){gotResult=true;clearTimeout(silenceTimer);try{recog.stop();}catch(e){}ask(f.trim(),'chat',true);}};
   recog.onend=()=>{listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤';clearTimeout(silenceTimer);if(!gotResult)status.textContent='Chưa nghe rõ, bấm 🎤 nói lại nha';};
   recog.onerror=()=>{listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤';clearTimeout(silenceTimer);status.textContent='Bấm 🎤 để nói';};}
 micBtn.onclick=()=>{unlock();if(!player.paused)player.pause();
   if(listening){try{recog.stop();}catch(e){}return;}
   gotResult=false;try{recog.start();listening=true;micBtn.classList.add('live');micBtn.textContent='■';status.textContent='Đang nghe… (bấm 🎤 khi xong)';}catch(e){}};
-$('typeBtn').onclick=()=>{unlock();const t=prompt("Thầy gõ câu muốn nói (tiếng Anh hoặc tiếng Việt):");if(t&&t.trim())ask(t.trim(),SYS_CHAT,'chat',true);};
-$('inspireBtn').onclick=()=>{unlock();ask("(suggest what I can say next)",SYS_INSPIRE,'inspire',false);};
+$('typeBtn').onclick=()=>{unlock();const t=prompt("Thầy gõ câu muốn nói (tiếng Anh hoặc tiếng Việt):");if(t&&t.trim())ask(t.trim(),'chat',true);};
+$('inspireBtn').onclick=()=>{unlock();ask("(suggest what I can say next)",'inspire',false);};
 $('spd').onclick=()=>{spi=(spi+1)%SPEEDS.length;rate=SPEEDS[spi];$('spd').textContent='🔊 '+rate+'x';if(!player.paused){player.playbackRate=rate;}};
 $('reload').onclick=()=>{convo=[];feed.innerHTML='';greet();};
-async function ask(text,system,mode,showYou){
+async function ask(text,mode,showYou){
   listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤';
   if(showYou)addYou(text);status.textContent='Đang nghĩ…';
   convo.push({role:'user',content:text});
+  const body=mode==='inspire'?{system:SYS_INSPIRE,messages:convo}:{messages:convo};
   try{
-    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system,messages:convo})});
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const data=await res.json();let o={};
-    try{o=JSON.parse(data.reply);}catch(_){o={reply_en:"Sorry, say that again?",reply_vi:"",correction:"",correction_vi:""};}
+    try{o=JSON.parse(data.reply);}catch(_){o={reply_en:"Sorry, say that again?",reply_vi:"",correction:"",correction_vi:"",pronunciation:""};}
     if(mode==='inspire'){addHint(o.reply_en||'',o.reply_vi||'');status.textContent='Tới lượt Thầy 😊';return;}
     convo.push({role:'assistant',content:o.reply_en||''});
-    if(o.correction&&o.correction.trim())addFix(o.correction.trim(),o.correction_vi||'');
+    if(o.correction&&o.correction.trim())addFix(o.correction.trim(),o.correction_vi||'',o.pronunciation||'');
     addAva(o.reply_en||'',o.reply_vi||'');playTTS(o.reply_en||'');
   }catch(e){status.textContent='Lỗi mạng, thử lại nha Thầy';}
 }
 function greet(){const en="Hey Dũng! How's your day going so far?";const vi="Chào Thầy! Hôm nay của Thầy thế nào rồi ạ?";convo.push({role:'assistant',content:en});addAva(en,vi);}
-window.addEventListener('load',()=>{fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:'ping',messages:[{role:'user',content:'hi'}]})}).catch(()=>{});greet();});
+window.addEventListener('load',()=>{fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:'hi'}]})}).catch(()=>{});greet();});
 </script>
 </body>
 </html>
