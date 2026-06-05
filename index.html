@@ -3,133 +3,173 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Ava — English Coach</title>
+<title>Ava — English Teacher</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--bg1:#2a1f3d;--bg2:#1a1228;--peach:#ffb38a;--rose:#ff8fa3;--gold:#ffd27d;--cream:#fff6ee;}
+  :root{--bg:#f4f1ec;--card:#ffffff;--ink:#2a2535;--muted:#8a8499;
+        --teal:#1fb6a6;--teal-d:#0f8f82;--amber1:#fff3cf;--amber2:#ffe6a3;
+        --green1:#e3f7ea;--green2:#c4eed3;--you:#eef0f6;}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;font-family:"Nunito",-apple-system,system-ui,sans-serif}
-  body{background:radial-gradient(ellipse at 50% 0%,#3a2a52,#140e1f);display:flex;justify-content:center;align-items:center;padding:10px;}
-  .phone{width:100%;max-width:400px;height:94vh;max-height:850px;background:linear-gradient(180deg,var(--bg1),var(--bg2));border-radius:42px;border:8px solid #0e0a17;box-shadow:0 30px 90px rgba(0,0,0,.65);position:relative;overflow:hidden;display:flex;flex-direction:column;}
-  .ava-stage{flex:1.05;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,rgba(255,179,138,.28),transparent 60%),radial-gradient(circle at 80% 10%,rgba(255,143,163,.22),transparent 50%);}
-  .halo{position:absolute;top:42px;width:210px;height:210px;border-radius:50%;background:radial-gradient(circle,rgba(255,210,125,.55),transparent 68%);filter:blur(6px);opacity:.5;transition:.35s;z-index:1;}
-  .halo.on{opacity:1;transform:scale(1.12)}
-  .avatar{position:relative;z-index:2;animation:bob 5s ease-in-out infinite}
-  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-  .ava-name{margin-top:6px;z-index:2;font-family:"Fraunces",serif;font-weight:600;font-size:21px;color:var(--cream);letter-spacing:.3px}
-  .ava-status{z-index:2;font-size:12px;color:rgba(255,246,238,.6);margin-top:2px;font-weight:600}
-  .ava-caption{z-index:2;margin:8px 22px 0;padding:9px 14px;border-radius:16px;background:rgba(255,255,255,.1);backdrop-filter:blur(4px);color:var(--cream);font-size:14.5px;line-height:1.45;text-align:center;max-width:330px;font-weight:600;}
-  .ava-caption:empty{display:none}
-  .fixbar{margin:0 16px;padding:0;border-radius:14px;overflow:hidden;max-height:0;transition:max-height .3s,padding .3s,margin .3s;z-index:4;background:linear-gradient(90deg,#fff3cf,#ffe9a8);box-shadow:0 6px 18px rgba(0,0,0,.25);}
-  .fixbar.show{max-height:140px;padding:10px 14px;margin:6px 16px}
-  .fixbar .lbl{font-size:11px;font-weight:800;color:#b07c00;letter-spacing:.4px;text-transform:uppercase}
-  .fixbar .txt{font-size:14.5px;color:#5a4500;font-weight:700;margin-top:2px;line-height:1.4}
-  .me-stage{flex:1;position:relative;background:#0c0814;overflow:hidden}
-  #cam{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
-  .me-off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,.4);gap:8px;font-weight:700;font-size:13px;text-align:center;padding:20px}
-  .me-tag{position:absolute;left:12px;bottom:12px;z-index:3;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);color:#fff;font-size:12px;font-weight:700;padding:5px 11px;border-radius:20px}
-  .me-said{position:absolute;left:12px;right:12px;bottom:46px;z-index:3;color:#fff;font-size:14px;font-weight:700;text-shadow:0 1px 6px rgba(0,0,0,.8);line-height:1.4}
-  .me-said:empty{display:none}
-  .cam-btn{position:absolute;right:12px;bottom:12px;z-index:3;border:none;cursor:pointer;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);color:#fff;font-size:18px;width:38px;height:38px;border-radius:50%}
-  .controls{padding:14px 18px 18px;background:linear-gradient(180deg,transparent,var(--bg2));position:relative;z-index:5}
-  .mic{width:100%;border:none;border-radius:20px;padding:16px;cursor:pointer;font-family:"Nunito";font-weight:800;font-size:16px;color:#3a2700;background:linear-gradient(90deg,var(--gold),var(--peach));box-shadow:0 8px 24px rgba(255,179,138,.35);transition:.2s}
-  .mic.live{background:linear-gradient(90deg,#fb7185,#f43f5e);color:#fff;box-shadow:0 8px 24px rgba(244,63,94,.4)}
-  .hint{text-align:center;color:rgba(255,246,238,.45);font-size:11px;margin-top:9px;font-weight:600}
-  .warn{margin:0 16px 8px;background:#7f1d1d;color:#fee;font-size:12px;padding:9px 12px;border-radius:12px;font-weight:600}
+  body{background:#11131a;display:flex;justify-content:center;align-items:center;padding:10px;}
+  .phone{width:100%;max-width:400px;height:95vh;max-height:860px;background:var(--bg);
+    border-radius:40px;border:8px solid #000;box-shadow:0 30px 90px rgba(0,0,0,.6);
+    position:relative;overflow:hidden;display:flex;flex-direction:column;}
+  .head{display:flex;align-items:center;gap:11px;padding:16px 18px 12px;background:var(--card);
+    border-bottom:1px solid #ece8e1}
+  .ava-pic{width:52px;height:52px;border-radius:50%;overflow:hidden;flex-shrink:0;
+    background:radial-gradient(circle at 50% 30%,#ffe2cf,#f3b58f);position:relative;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+  .ava-pic.on{box-shadow:0 0 0 3px rgba(31,182,166,.5)}
+  .h-name{font-family:"Fraunces",serif;font-weight:600;font-size:18px;color:var(--ink);line-height:1}
+  .h-sub{font-size:12px;color:var(--muted);margin-top:3px;font-weight:600}
+  .h-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .selfcam{width:46px;height:46px;border-radius:14px;overflow:hidden;background:#e7e3db;position:relative;display:none}
+  .selfcam video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+  .icon-btn{border:none;background:#eef0f6;color:#5a5468;width:38px;height:38px;border-radius:12px;font-size:16px;cursor:pointer}
+  .feed{flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:12px}
+  .tip{align-self:center;background:#e9e5dd;color:#7a7488;font-size:12px;font-weight:700;padding:7px 14px;border-radius:20px;text-align:center;max-width:90%}
+  .you{align-self:flex-end;background:var(--you);color:var(--ink);border-radius:18px 18px 4px 18px;padding:11px 15px;font-size:15px;font-weight:700;max-width:82%;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+  .card{align-self:flex-start;max-width:88%;border-radius:18px 18px 18px 4px;padding:13px 15px;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+  .fix{background:linear-gradient(180deg,var(--amber1),var(--amber2))}
+  .good{background:linear-gradient(180deg,var(--green1),var(--green2))}
+  .c-lbl{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+  .fix .c-lbl{color:#b07c00}.good .c-lbl{color:#1f7a47}
+  .c-eng{font-size:16.5px;font-weight:800;margin-top:5px;line-height:1.35}
+  .fix .c-eng{color:#7a3b00}.good .c-eng{color:#1f6b3a}
+  .c-vn{font-size:14px;font-weight:700;margin-top:8px;line-height:1.45;padding-top:7px}
+  .fix .c-vn{color:#6a4a00;border-top:1px solid rgba(176,124,0,.25)}
+  .good .c-vn{color:#256e44;border-top:1px solid rgba(31,122,71,.2)}
+  .replay{margin-top:9px;display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;
+    background:rgba(0,0,0,.08);color:var(--ink);font-family:"Nunito";font-weight:800;font-size:13px;
+    padding:6px 12px;border-radius:20px}
+  .controls{padding:12px 16px 18px;background:var(--card);border-top:1px solid #ece8e1}
+  .row{display:flex;gap:10px;align-items:center}
+  .mic{flex:1;border:none;border-radius:18px;padding:16px;cursor:pointer;font-family:"Nunito";
+    font-weight:800;font-size:16px;color:#fff;background:linear-gradient(90deg,var(--teal),var(--teal-d));
+    box-shadow:0 8px 22px rgba(31,182,166,.35)}
+  .mic.live{background:linear-gradient(90deg,#fb7185,#f43f5e);box-shadow:0 8px 22px rgba(244,63,94,.35)}
+  .tr-btn{border:none;border-radius:18px;padding:16px 14px;cursor:pointer;background:#eef0f6;color:#5a5468;font-size:18px}
+  .hint{text-align:center;color:var(--muted);font-size:11px;margin-top:9px;font-weight:600}
+  .warn{margin:8px 16px;background:#fde2e2;color:#9b1c1c;font-size:12px;padding:9px 12px;border-radius:12px;font-weight:700}
 </style>
 </head>
 <body>
   <div class="phone">
-    <div class="ava-stage">
-      <div class="halo" id="halo"></div>
-      <svg class="avatar" id="avatar" width="180" height="180" viewBox="0 0 240 240">
-        <defs>
-          <radialGradient id="skin" cx="45%" cy="38%" r="65%"><stop offset="0%" stop-color="#ffe2cf"/><stop offset="100%" stop-color="#f3b58f"/></radialGradient>
-          <linearGradient id="hair" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a2f4f"/><stop offset="100%" stop-color="#2e1c33"/></linearGradient>
-        </defs>
-        <ellipse cx="120" cy="128" rx="78" ry="86" fill="url(#hair)"/>
-        <rect x="104" y="172" width="32" height="34" rx="14" fill="#eaa57f"/>
-        <ellipse cx="120" cy="118" rx="62" ry="70" fill="url(#skin)"/>
-        <path d="M58 104 Q72 50 120 48 Q168 50 182 104 Q165 78 120 76 Q75 78 58 104 Z" fill="url(#hair)"/>
-        <path d="M58 104 Q60 70 92 58 Q72 78 70 112 Z" fill="url(#hair)"/>
-        <path d="M182 104 Q180 70 148 58 Q168 78 170 112 Z" fill="url(#hair)"/>
-        <ellipse cx="86" cy="138" rx="13" ry="9" fill="#ff9d8f" opacity=".4"/>
-        <ellipse cx="154" cy="138" rx="13" ry="9" fill="#ff9d8f" opacity=".4"/>
-        <path d="M78 100 Q95 92 110 99" stroke="#46303f" stroke-width="4" fill="none" stroke-linecap="round"/>
-        <path d="M130 99 Q145 92 162 100" stroke="#46303f" stroke-width="4" fill="none" stroke-linecap="round"/>
-        <g id="eyeL"><ellipse cx="94" cy="115" rx="12" ry="13" fill="#fff"/><circle cx="95" cy="116" r="7" fill="#5b3a2e"/><circle cx="95" cy="116" r="3" fill="#1a0f0a"/><circle cx="92" cy="113" r="2.2" fill="#fff"/></g>
-        <g id="eyeR"><ellipse cx="146" cy="115" rx="12" ry="13" fill="#fff"/><circle cx="145" cy="116" r="7" fill="#5b3a2e"/><circle cx="145" cy="116" r="3" fill="#1a0f0a"/><circle cx="142" cy="113" r="2.2" fill="#fff"/></g>
-        <path d="M120 122 Q124 138 117 144" stroke="#e09a78" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <path id="mouth" d="M104 160 Q120 168 136 160" stroke="#c14f5a" stroke-width="5" fill="#e57082" stroke-linecap="round"/>
-      </svg>
-      <div class="ava-name">Ava</div>
-      <div class="ava-status" id="status">Bấm nút bên dưới để bắt đầu</div>
-      <div class="ava-caption" id="avaCap"></div>
+    <div class="head">
+      <div class="ava-pic" id="avapic">
+        <svg width="52" height="52" viewBox="0 0 240 240">
+          <defs>
+            <radialGradient id="sk" cx="45%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffe2cf"/><stop offset="100%" stop-color="#f3b58f"/></radialGradient>
+            <linearGradient id="hr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4a2f4f"/><stop offset="100%" stop-color="#2e1c33"/></linearGradient>
+          </defs>
+          <ellipse cx="120" cy="128" rx="78" ry="86" fill="url(#hr)"/>
+          <ellipse cx="120" cy="120" rx="62" ry="70" fill="url(#sk)"/>
+          <path d="M58 106 Q72 52 120 50 Q168 52 182 106 Q165 80 120 78 Q75 80 58 106 Z" fill="url(#hr)"/>
+          <ellipse cx="88" cy="140" rx="12" ry="8" fill="#ff9d8f" opacity=".4"/><ellipse cx="152" cy="140" rx="12" ry="8" fill="#ff9d8f" opacity=".4"/>
+          <g id="eL"><ellipse cx="96" cy="117" rx="11" ry="12" fill="#fff"/><circle cx="97" cy="118" r="6" fill="#5b3a2e"/><circle cx="97" cy="118" r="2.6" fill="#1a0f0a"/></g>
+          <g id="eR"><ellipse cx="144" cy="117" rx="11" ry="12" fill="#fff"/><circle cx="145" cy="118" r="6" fill="#5b3a2e"/><circle cx="145" cy="118" r="2.6" fill="#1a0f0a"/></g>
+          <path id="mo" d="M104 162 Q120 170 136 162" stroke="#c14f5a" stroke-width="6" fill="#e57082" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="h-name">Ava</div>
+        <div class="h-sub" id="status">Cô giáo tiếng Anh · giọng AI</div>
+      </div>
+      <div class="h-right">
+        <div class="selfcam" id="selfcam"><video id="cam" autoplay playsinline muted></video></div>
+        <button class="icon-btn" id="camBtn" title="camera">📷</button>
+      </div>
     </div>
-    <div class="fixbar" id="fixbar"><div class="lbl">✏️ Better English</div><div class="txt" id="fixtxt"></div></div>
-    <div class="me-stage">
-      <video id="cam" autoplay playsinline muted></video>
-      <div class="me-off" id="meoff">📷<br>Bấm nút camera để bật<br>hình của Thầy</div>
-      <div class="me-tag">You</div>
-      <div class="me-said" id="meSaid"></div>
-      <button class="cam-btn" id="camBtn">📷</button>
+    <div class="feed" id="feed">
+      <div class="tip">Bấm 🎤 và nói một câu tiếng Anh. Ava sẽ sửa lỗi và đọc câu đúng cho Thầy nghe.</div>
     </div>
     <div id="warnbox"></div>
     <div class="controls">
-      <button class="mic" id="mic">▶️  Bấm để bắt đầu</button>
-      <div class="hint">Bấm nút · nói tiếng Anh · Ava trả lời và sửa lỗi cho Thầy</div>
+      <div class="row">
+        <button class="mic" id="mic">▶️  Bấm để bắt đầu</button>
+        <button class="tr-btn" id="trBtn" title="Dịch Việt → Anh">🌐</button>
+      </div>
+      <div class="hint">🎤 nói tiếng Anh để được sửa · 🌐 gõ tiếng Việt để biết cách nói tiếng Anh</div>
     </div>
   </div>
 <script>
-const SYSTEM_PROMPT = `You are "Ava", a warm, encouraging English conversation coach for a 65-year-old Vietnamese learner practicing GENERAL conversation (travel, work, daily life).
-You MUST reply with ONLY a valid JSON object, no markdown, in this exact shape:
-{"correction": "", "reply": ""}
-- "correction": if the learner's last message has English mistakes, put the corrected natural version of THEIR sentence here; if it was fine, use "".
-- "reply": your short spoken reply, 1-2 sentences, friendly, always ending with a simple follow-up question. Easy to understand.`;
+const TEACHER=`You are "Ava", an English TEACHER for a Vietnamese learner named Henry. Do NOT chit-chat. Each time Henry says an English sentence, check it and correct mistakes like a teacher.
+Reply with ONLY valid JSON, no markdown, exactly: {"original":"","corrected":"","hasError":true,"explain":""}
+- "original": Henry's sentence as understood.
+- "corrected": the correct, natural English version (unchanged if already correct).
+- "hasError": true if any grammar/word/article/tense mistake, else false.
+- "explain": SHORT explanation in Southern Vietnamese of what was wrong + the simple rule. If no error, a short Vietnamese praise.`;
+const TRANSLATE=`You are an English teacher. The user gives a Vietnamese sentence. Reply ONLY valid JSON: {"original":"","corrected":"","hasError":false,"explain":""} where "corrected" is the natural English translation Henry can practice saying, and "explain" is a short Southern-Vietnamese note on usage. Set hasError false.`;
 const $=id=>document.getElementById(id);
-const chat={messages:[]};
-let listening=false,speaking=false,recog=null,mouthTimer=null;
-let audioReady=false,greeted=false;
-const GREET="Hi! I'm Ava, your English coach. What's your name?";
-const halo=$('halo'),mouth=$('mouth'),status=$('status'),avaCap=$('avaCap');
-const fixbar=$('fixbar'),fixtxt=$('fixtxt'),meSaid=$('meSaid'),micBtn=$('mic');
-function blink(){const eL=$('eyeL'),eR=$('eyeR');eL.style.transition=eR.style.transition='transform .08s';eL.style.transformOrigin=eR.style.transformOrigin='center 116px';eL.style.transform=eR.style.transform='scaleY(0.1)';setTimeout(()=>{eL.style.transform=eR.style.transform='scaleY(1)';},120);}
+let listening=false,recog=null,mouthTimer=null,started=false,convo=[];
+const status=$('status'),feed=$('feed'),micBtn=$('mic'),mo=$('mo'),avapic=$('avapic');
+const player=new Audio();
+function blink(){const a=$('eL'),b=$('eR');a.style.transition=b.style.transition='transform .08s';a.style.transformOrigin=b.style.transformOrigin='center 118px';a.style.transform=b.style.transform='scaleY(0.1)';setTimeout(()=>{a.style.transform=b.style.transform='scaleY(1)';},120);}
 setInterval(blink,4200);
-function startMouth(){stopMouth();halo.classList.add('on');mouthTimer=setInterval(()=>{const o=Math.random();const d=o>.5?`M104 158 Q120 ${168+o*10} 136 158`:`M104 161 Q120 ${164+o*4} 136 161`;mouth.setAttribute('d',d);},110);}
-function stopMouth(){if(mouthTimer)clearInterval(mouthTimer);mouthTimer=null;mouth.setAttribute('d','M104 160 Q120 168 136 160');halo.classList.remove('on');}
-function primeAudio(){if(audioReady)return;try{const s=new SpeechSynthesisUtterance(' ');s.volume=0;window.speechSynthesis.speak(s);audioReady=true;}catch(e){}}
-function speak(t){if(!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.95;u.pitch=1.15;const v=window.speechSynthesis.getVoices();const p=v.find(x=>/female|samantha|zira|google us english|aria/i.test(x.name)&&x.lang.startsWith('en'))||v.find(x=>x.lang==='en-US');if(p)u.voice=p;u.onstart=()=>{speaking=true;startMouth();status.textContent='Ava đang nói…';};u.onend=()=>{speaking=false;stopMouth();status.textContent='Tới lượt Thầy 😊';};window.speechSynthesis.speak(u);try{window.speechSynthesis.resume();}catch(e){}}
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-if(!SR){$('warnbox').innerHTML='<div class="warn">Trình duyệt chưa hỗ trợ nhận giọng nói. Thầy mở bằng Safari hoặc Chrome mới nhé.</div>';}
-else{recog=new SR();recog.lang='en-US';recog.interimResults=true;recog.continuous=false;
-  recog.onresult=e=>{let f='',i='';for(let k=e.resultIndex;k<e.results.length;k++){const t=e.results[k][0].transcript;if(e.results[k].isFinal)f+=t;else i+=t;}if(i)meSaid.textContent=i;if(f){meSaid.textContent=f.trim();handleUser(f.trim());}};
-  recog.onend=()=>{listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤  Tap to speak';};
-  recog.onerror=()=>{listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤  Tap to speak';};}
-micBtn.onclick=()=>{
-  primeAudio();
-  if(!greeted){greeted=true;avaCap.textContent=GREET;chat.messages.push({role:'assistant',content:GREET});speak(GREET);micBtn.textContent='🎤  Tap to speak';return;}
-  if(speaking){window.speechSynthesis.cancel();speaking=false;stopMouth();}
-  if(listening){recog.stop();return;}
-  fixbar.classList.remove('show');
-  try{recog.start();listening=true;micBtn.classList.add('live');micBtn.textContent='■  Stop · listening';status.textContent='Đang nghe…';}catch(e){}};
-async function handleUser(text){
-  listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤  Tap to speak';
-  chat.messages.push({role:'user',content:text});status.textContent='Đang nghĩ…';avaCap.textContent='…';
+function startMouth(){stopMouth();avapic.classList.add('on');mouthTimer=setInterval(()=>{const o=Math.random();mo.setAttribute('d',o>.5?`M104 160 Q120 ${170+o*9} 136 160`:`M104 163 Q120 ${166+o*4} 136 163`);},110);}
+function stopMouth(){if(mouthTimer)clearInterval(mouthTimer);mouthTimer=null;mo.setAttribute('d','M104 162 Q120 170 136 162');avapic.classList.remove('on');}
+function silentURL(){const sr=8000,n=400,buf=new ArrayBuffer(44+n),v=new DataView(buf);
+  const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};
+  w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);for(let i=0;i<n;i++)v.setUint8(44+i,128);
+  return URL.createObjectURL(new Blob([buf],{type:'audio/wav'}));}
+player.onplay=()=>{startMouth();status.textContent='Ava đang đọc…';};
+player.onended=()=>{stopMouth();status.textContent='Tới lượt Thầy 😊';};
+player.onerror=()=>{stopMouth();};
+async function playTTS(text){
   try{
-    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:SYSTEM_PROMPT,messages:chat.messages})});
-    const data=await res.json();let correction='',reply='';
-    try{const p=JSON.parse(data.reply);correction=p.correction||'';reply=p.reply||'';}catch(_){reply=data.reply||"Could you say that again?";}
-    if(!reply)reply="Could you say that again?";
-    chat.messages.push({role:'assistant',content:reply});
-    if(correction&&correction.trim()){fixtxt.textContent=correction.trim();fixbar.classList.add('show');}else{fixbar.classList.remove('show');}
-    avaCap.textContent=reply;speak(reply);
-  }catch(err){const fb="Hmm, let's try that again. How are you today?";avaCap.textContent=fb;speak(fb);}
+    status.textContent='…';
+    const r=await fetch('/api/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,voice:'coral'})});
+    const d=await r.json();
+    if(d.audio){player.src='data:audio/mp3;base64,'+d.audio;await player.play();}
+    else fallbackSpeak(text);
+  }catch(e){fallbackSpeak(text);}
 }
-const cam=$('cam'),meoff=$('meoff');let camOn=false;
-async function startCam(){try{const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});cam.srcObject=s;meoff.style.display='none';camOn=true;}catch(e){meoff.innerHTML='📷<br>Chưa bật được camera<br>(Thầy cho phép quyền camera nhé)';}}
-$('camBtn').onclick=()=>{if(camOn){(cam.srcObject?.getTracks()||[]).forEach(x=>x.stop());cam.srcObject=null;camOn=false;meoff.style.display='flex';}else startCam();};
-window.addEventListener('load',()=>{startCam();avaCap.textContent="Bấm ▶️ để Ava chào Thầy nha!";});
+function fallbackSpeak(t){if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.92;startMouth();u.onend=stopMouth;window.speechSynthesis.speak(u);}
+function addYou(t){const d=document.createElement('div');d.className='you';d.textContent=t;feed.appendChild(d);feed.scrollTop=feed.scrollHeight;}
+function addCard(eng,vn,err){const d=document.createElement('div');d.className='card '+(err?'fix':'good');
+  d.innerHTML=`<div class="c-lbl">${err?'✏️ Câu đúng':'✅ Tốt lắm'}</div><div class="c-eng"></div><div class="c-vn"></div><button class="replay">🔊 Nghe lại</button>`;
+  d.querySelector('.c-eng').textContent=eng;d.querySelector('.c-vn').textContent=(err?'💡 ':'')+vn;
+  d.querySelector('.replay').onclick=()=>playTTS(eng);
+  feed.appendChild(d);feed.scrollTop=feed.scrollHeight;}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SR){$('warnbox').innerHTML='<div class="warn">Trình duyệt chưa hỗ trợ nhận giọng nói. Thầy mở bằng Safari/Chrome nhé.</div>';}
+else{recog=new SR();recog.lang='en-US';recog.interimResults=false;recog.continuous=false;
+  recog.onresult=e=>{const t=e.results[0][0].transcript.trim();if(t)ask(t,TEACHER);};
+  recog.onend=()=>{listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤  Bấm để nói';};
+  recog.onerror=()=>{listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤  Bấm để nói';};}
+micBtn.onclick=()=>{
+  if(!started){started=true;try{player.src=silentURL();player.play().catch(()=>{});}catch(e){}
+    micBtn.textContent='🎤  Bấm để nói';status.textContent='Tới lượt Thầy 😊';
+    addCard("Hello Henry! Say an English sentence and I will correct it.","Chào Thầy! Thầy nói một câu tiếng Anh, Ava sẽ sửa cho.",false);
+    playTTS("Hello Henry! Say an English sentence and I will correct it.");return;}
+  if(!player.paused){player.pause();}
+  if(listening){recog.stop();return;}
+  try{recog.start();listening=true;micBtn.classList.add('live');micBtn.textContent='■  Đang nghe';status.textContent='Đang nghe…';}catch(e){}};
+$('trBtn').onclick=()=>{
+  if(!started){started=true;try{player.src=silentURL();player.play().catch(()=>{});}catch(e){}micBtn.textContent='🎤  Bấm để nói';}
+  const vn=prompt("Thầy gõ câu TIẾNG VIỆT, Ava dịch sang tiếng Anh cho Thầy tập nói:");
+  if(vn&&vn.trim())ask(vn.trim(),TRANSLATE,true);
+};
+async function ask(text,system,isTranslate){
+  listening=false;micBtn.classList.remove('live');micBtn.textContent='🎤  Bấm để nói';
+  if(!isTranslate)addYou(text);
+  status.textContent='Đang kiểm tra…';
+  convo.push({role:'user',content:text});
+  try{
+    const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system,messages:convo})});
+    const data=await res.json();let o={};
+    try{o=JSON.parse(data.reply);}catch(_){o={corrected:text,hasError:false,explain:"(thử lại nha Thầy)"};}
+    const eng=o.corrected||text,vn=o.explain||'',err=!!o.hasError;
+    convo.push({role:'assistant',content:eng});
+    addCard(eng,vn,err);playTTS(eng);
+  }catch(e){status.textContent='Lỗi mạng, thử lại nha Thầy';}
+}
+const cam=$('cam'),selfcam=$('selfcam');let camOn=false;
+$('camBtn').onclick=async()=>{
+  if(camOn){(cam.srcObject?.getTracks()||[]).forEach(x=>x.stop());cam.srcObject=null;camOn=false;selfcam.style.display='none';return;}
+  try{const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});cam.srcObject=s;selfcam.style.display='block';camOn=true;}catch(e){alert('Thầy cho phép quyền camera nhé');}
+};
 </script>
 </body>
 </html>
